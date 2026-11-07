@@ -47,6 +47,7 @@ src/
   lib/
     contact.ts      WhatsApp e Instagram
     format.ts       moeda e metragem (pt-BR)
+    search.ts       filtragem e ordenação da busca avançada
 ```
 
 ## Onde editar o conteúdo
@@ -67,6 +68,35 @@ Nenhum texto fica dentro dos componentes.
 3. Acrescente um objeto ao array `properties` seguindo a interface `Property`.
 
 O card, o filtro, o contador e a mensagem de WhatsApp se atualizam sozinhos.
+
+### Busca avançada
+
+Painel em `src/components/PropertySearch.tsx`; toda a lógica fica em
+`src/lib/search.ts`, separada da interface.
+
+| Campo | Comportamento |
+| --- | --- |
+| O que você procura | Texto livre em bairro, tipo e diferenciais. Ignora acentos e exige todas as palavras digitadas. |
+| Bairro | Lista montada a partir dos imóveis cadastrados. |
+| Ordenar por | Seleção do Marcos (ordem do arquivo), menor preço, maior preço, maior área. |
+| Quartos / Suítes / Banheiros / Garagem | Mínimos ("2+ quartos"). |
+| Valor mínimo / máximo | Degraus de R$ 50.000 calculados a partir da carteira. |
+| Área mínima | Degraus de 50 a 250 m², limitados ao maior imóvel disponível. |
+
+Nenhuma opção é fixa no código: bairros, faixas de preço e de área são
+derivados de `properties.ts`. Cadastrar um imóvel num bairro novo já
+acrescenta o bairro à lista.
+
+O painel abre sozinho a partir de 1024px e fica recolhido no celular, com
+um contador de filtros ativos no botão. Os contadores das abas de tipo
+consideram os demais filtros em uso, então nunca mostram um número que a
+busca não entregaria. "Limpar filtros" zera a busca avançada e mantém a
+aba e a ordenação escolhidas.
+
+Não há campo "Código" porque os imóveis não possuem código de referência
+no material enviado — a busca por texto livre cobre a mesma necessidade.
+Se o Marcos adotar códigos, basta acrescentar o campo em `Property` e um
+`input` no painel.
 
 ### Filtros com 0 imóveis
 
